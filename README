@@ -1,0 +1,15 @@
+# Treehouse is a multipurpose all-in-one discord bot with many features. 
+# This bot is currently being developed, so it does not have all the features that are inteded to be added.
+# The default prefix for this bot is "!", but you can change the bot's prefix as needed with the !setpre or !setprefix command.
+# You can also ping the bot directly in substitute of the prefix if you do not remember what the prefix is
+# i.e @Treehouse#7704 prefix
+
+
+
+# The bot includes a music bot feature, with users being able to play, pause, skip, add to queue, loop a song, view the queue, and more.
+# Users can also make the bot leave early with the !leave command.
+
+# The bot includes a fun feature as well, which is currently only the !yomama command. In the near future the !hug, !kiss, !slap commands will all be added.
+# Virtual currencies for each player will also be added since there will be minigames and gambling.
+
+# This bot currently has a welcome feature as well. In the near future it will also have a moderation feature and a Ticket Support feature.
