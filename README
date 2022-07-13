@@ -13,3 +13,8 @@
 # Virtual currencies for each player will also be added since there will be minigames and gambling.
 
 # This bot currently has a welcome feature as well. In the near future it will also have a moderation feature and a Ticket Support feature.
+
+
+############ IMPORTANT #####################
+
+# exp.py, music.py, fun.py, economy.py, and admin.py **MUST** ALL BE PUT into a "cogs" folder that is in the **SAME** directory as bot.py
