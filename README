@@ -9,12 +9,13 @@
 # The bot includes a music bot feature, with users being able to play, pause, skip, add to queue, loop a song, view the queue, and more.
 # Users can also make the bot leave early with the !leave command.
 
-# The bot includes a fun feature as well, which is currently only the !yomama command. In the near future the !hug, !kiss, !slap commands will all be added.
-# Virtual currencies for each player will also be added since there will be minigames and gambling.
+# The bot includes a fun feature as well which includes gambling and a virtual currency. It also has a color system for guilds to create color roles that users can set.
 
-# This bot currently has a welcome feature as well. In the near future it will also have a moderation feature and a Ticket Support feature.
+
+# This bot currently has a welcome feature, anti-spam feature, level system feature, and afk feature as well. 
+# In the near future it will also have a moderation feature and a Ticket Support feature (for now). 
 
 
 ############ IMPORTANT #####################
 
-# exp.py, music.py, fun.py, economy.py, and admin.py **MUST** ALL BE PUT into a "cogs" folder that is in the **SAME** directory as bot.py
+# All .py files except bot.py **MUST** ALL BE PUT into a "cogs" folder that is in the **SAME** directory as bot.py
