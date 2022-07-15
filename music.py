@@ -12,8 +12,9 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def node_connect(self):
         await self.bot.wait_until_ready()
-        await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.mariliun.ml', port=443, password='lavaliun',
-                                            https=True)
+        # await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.oops.wtf', port=443, password='www.freelavalink.ga',
+        #                                     https=True)
+        await wavelink.NodePool.create_node(bot=self.bot, host='lava-ny-01.thermalhosting.com', port=4018, password='thermalhosting.com', https=False)
 
     # log in
     @commands.Cog.listener()
@@ -130,7 +131,7 @@ class Music(commands.Cog):
             await ctx.send("There is no audio playing.")
 
     # resume song command
-    @commands.command(help="Resume a song that is currently paused.")
+    @commands.command(aliases=["res"], help="Resume a song that is currently paused.")
     @commands.guild_only()
     async def resume(self, ctx):
         if not ctx.voice_client:
@@ -212,9 +213,9 @@ class Music(commands.Cog):
                 setattr(vc, "loop", False)
             await vc.stop()
 
-    @commands.command(help="Check what song is currently playing")
+    @commands.command(aliases=["nowp"], help="Check what song is currently playing")
     @commands.guild_only()
-    async def nowp(self, ctx):
+    async def nowplaying(self, ctx):
         if not ctx.voice_client:
             return await ctx.send("The bot is not in a voice channel.")
         else:
@@ -233,9 +234,9 @@ class Music(commands.Cog):
         else:
             await ctx.send("The bot is currently not playing any audio.")
 
-    @commands.command(help="Check what song is playing next")
+    @commands.command(aliases=["nextp"], help="Check what song is playing next")
     @commands.guild_only()
-    async def nextp(self, ctx):
+    async def nextplaying(self, ctx):
         if not ctx.voice_client:
             return await ctx.send("The bot is not in a voice channel.")
         else:
