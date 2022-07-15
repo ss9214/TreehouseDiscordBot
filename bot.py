@@ -9,6 +9,7 @@ import asyncio
 import aiohttp
 import logging
 
+
 load_dotenv()
 
 # token and guild
@@ -17,78 +18,48 @@ GUILD = os.getenv('DISCORD_GUILD')
 DEFAULT_PREFIX = '!'
 # intents
 intents = discord.Intents.all()
-
-##################### prefix stuff #################################
-cache = {995741045851689010: "!"}
-
-
-# get current prefix
-async def get_prefix(bot, message):
-    for key, value in cache.items():
-        try:
-            prefix = cache[key]
-        except KeyError:  # not cached
-            prefix = await bot.db.fetchval('SELECT prefix FROM guilds WHERE guild_id = $1', message.guild.id)
-            if prefix is None:
-                prefix = DEFAULT_PREFIX
-                cache[message.guild.id] = prefix
-        else:  # cached
-            if prefix is None:
-                prefix = DEFAULT_PREFIX
-        return commands.when_mentioned_or(prefix)(bot, message)
+cache = {"00000000000000": "!"}
+activity = discord.Game(name="ur mom")
 
 
-################################ Main Code #####################################################
+# metaclass
 class MyCogs(commands.Bot):
     async def setup_hook(self):
         initial_extensions = ['cogs.music',
                               'cogs.fun',
                               'cogs.economy',
                               'cogs.admin',
-                              'cogs.exp']
+                              'cogs.leveling',
+                              'cogs.utility',
+                              'cogs.antispam',
+                              'cogs.colors']
         for extension in initial_extensions:
             await self.load_extension(extension)
 
 
-# set prefix
-bot = MyCogs(command_prefix=get_prefix, intents=intents)
+# get current prefix
+async def get_prefix(bot, message):
+    try:
+        prefix = cache[message.guild.id]
+    except KeyError:  # not cached
+        guild = await bot.db.fetchval('SELECT guild_id FROM guilds WHERE guild_id = $1', message.guild.id)
+        if guild:  # in database
+            prefix = await bot.db.fetchval('SELECT prefix FROM guilds WHERE guild_id = $1', message.guild.id)
+            cache[message.guild.id] = prefix
+        else:
+            prefix = DEFAULT_PREFIX
+    else:  # cached
+        if cache[message.guild.id] is None:
+            prefix = DEFAULT_PREFIX
+    return commands.when_mentioned_or(prefix)(bot, message)
 
 
-# change prefix
-@bot.command(aliases=['setpre'], help="Change the prefix of the server.")
-@commands.has_permissions(administrator=True)
-async def setprefix(ctx, new_prefix):
-    await bot.db.execute('UPDATE guilds SET prefix = $1 WHERE guild_id = $2', new_prefix, ctx.guild.id)
-    cache[ctx.guild.id] = new_prefix
-    await ctx.send("Prefix Updated")
+bot = MyCogs(get_prefix, intents=intents, activity=activity, status=discord.Status.idle)
+bot.cache = cache
+spam_dict = {0000000000: ["word", "word", "word", "word"]}
 
 
-# check prefix
-@bot.command(aliases=['pre'], help="Check what the current prefix of this server is.")
-@commands.guild_only()
-async def prefix(ctx):
-    for key in cache.keys():
-        try:
-            ctx.guild.id = key
-        except KeyError:  # not cached
-            await ctx.send("The prefix of this server is !")
-        else:  # cached
-            await ctx.send(f"The prefix of this server is {cache[ctx.guild.id]}")
-
-
-################################ Main Code #####################################################
-class MyCogs(commands.Bot):
-    async def setup_hook(self):
-        initial_extensions = ['cogs.music',
-                              'cogs.fun']
-        for extension in initial_extensions:
-            await self.load_extension(extension)
-
-
-bot = MyCogs(command_prefix=get_prefix, intents=intents)
 # Log in text
-
-
 @bot.event
 async def on_ready():
     print("Logged in as: " + bot.user.name)
@@ -104,6 +75,36 @@ async def on_member_join(member):
         )
 
 
+############################## HELP ###########################################################
+class MyHelp(commands.HelpCommand):
+    async def send_bot_help(self, mapping):
+        embed = discord.Embed(title="Help")
+        for cog, commands in mapping.items():
+            command_signatures = [self.get_command_signature(c) for c in commands]
+            if command_signatures:
+                cog_name = getattr(cog, "qualified_name", "No Category")
+                emoji = ""
+                if cog_name == "Music":
+                    emoji = '<:musicnotes:996810296956026910>'
+                elif cog_name == "Fun":
+                    emoji = ':tada:'
+                elif cog_name == "Economy":
+                    emoji = '<:money:996812142021976186>'
+                elif cog_name == "Admin":
+                    emoji = ':gear:'
+                elif cog_name == "Leveling":
+                    emoji = ':star_struck:'
+                elif cog_name == "Utility":
+                    emoji = ':straight_ruler:'
+                elif cog_name == "Colors":
+                    emoji = ':art:'
+                embed.add_field(name=f'__{cog_name}__  {emoji}', value="\n".join(command_signatures), inline=True)
+        channel = self.get_destination()
+        await channel.send(embed=embed)
+
+
+bot.help_command = MyHelp()
+
 ################################# Create Database #############################################
 logging.basicConfig(level=logging.INFO)
 
@@ -117,4 +118,3 @@ async def main():
 
 
 asyncio.run(main())
-
