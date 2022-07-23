@@ -10,7 +10,7 @@ class Colors(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["addc", "ac"])
+    @commands.command(aliases=["addc", "ac"], description="Create a color for the server. Must have administrator permissions.")
     @commands.has_permissions(manage_roles=True)
     @commands.guild_only()
     async def create_color(self, ctx, hex_code, name):
@@ -60,7 +60,7 @@ class Colors(commands.Cog):
         else:
             raise error
 
-    @commands.command(aliases=["setc", "sc"])
+    @commands.command(aliases=["setc", "sc"], description="Set your color role.")
     @commands.guild_only()
     async def set_color(self, ctx, color):
         your_roles = ctx.author.roles
@@ -103,7 +103,7 @@ class Colors(commands.Cog):
                         await ctx.author.add_roles(roles[i])
                         return await ctx.send(f"Your color is now {color}")
 
-    @commands.command(aliases=["remc", "rc"])
+    @commands.command(aliases=["remc", "rc"], description="Remove a color role that you have.")
     @commands.guild_only()
     async def remove_color(self, ctx, color):
         your_roles = ctx.author.roles
