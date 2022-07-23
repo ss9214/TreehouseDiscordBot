@@ -13,15 +13,15 @@ class AntiSpam(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def spam_check(self, message):
-        if not message.author.is_timed_out():
-            bucket = self.cd_mapping.get_bucket(message)
-            retry_after = bucket.update_rate_limit()
-            if retry_after:
+        bucket = self.cd_mapping.get_bucket(message)
+        retry_after = bucket.update_rate_limit()
+        if retry_after:
+            await message.author.timeout(timedelta(seconds=5))
+            if message.author.is_timed_out():
                 await message.author.send(f"You have been muted for 5 seconds in {message.guild.name} for spamming.")
-                await message.author.timeout(timedelta(seconds=5))
                 await asyncio.sleep(1)
-            else:
-                return
+        else:
+            return
 
 
 async def setup(bot):
