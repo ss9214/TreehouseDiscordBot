@@ -8,7 +8,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["ym"], help="Responds with an offensive yo mama joke.")
+    @commands.command(aliases=["ym"], description="Responds with an offensive yo mama joke.")
     @commands.guild_only()
     async def yomama(self, ctx):
         yo_mama_quotes = [
@@ -25,12 +25,12 @@ class Fun(commands.Cog):
         response = random.choice(yo_mama_quotes)
         await ctx.send(response)
 
-    @commands.command(help="Run this command for a good chuckle")
+    @commands.command(description="Run this command for a good chuckle.")
     @commands.guild_only()
     async def rr(self, ctx, *args):
         await ctx.send('https://tenor.com/view/rick-astly-rick-rolled-gif-22755440')
 
-    @commands.command(help="Slap a friend.")
+    @commands.command(description="Slap a friend.")
     @commands.guild_only()
     async def slap(self, ctx, *args):
         slap_gifs = ['https://cdn.discordapp.com/attachments/995847174854291526/996248072407486526/IMG_2334.gif',
@@ -39,7 +39,7 @@ class Fun(commands.Cog):
         response = random.choice(slap_gifs)
         await ctx.send(response)
 
-    @commands.command(help="Slap a friend.")
+    @commands.command(description="Hug a friend.")
     @commands.guild_only()
     async def hug(self, ctx, *args):
         hug_gifs = ['https://cdn.discordapp.com/attachments/995847174854291526/996248363328614480/IMG_2338.gif',
@@ -48,7 +48,7 @@ class Fun(commands.Cog):
         response = random.choice(hug_gifs)
         await ctx.send(response)
 
-    @commands.command(help="Slap a friend.")
+    @commands.command(description="Kiss a friend.")
     @commands.guild_only()
     async def kiss(self, ctx, *args):
         kiss_gifs = ['https://cdn.discordapp.com/attachments/995847174854291526/996247560136171632/IMG_2331.gif',
