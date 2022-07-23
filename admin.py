@@ -8,7 +8,7 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(description="Reset a user's player data. Must have administrator permissions.")
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     async def reset_user(self, ctx, user):
@@ -25,7 +25,7 @@ class Admin(commands.Cog):
             raise error
 
     # set prefix
-    @commands.command(aliases=['setpre'], help="Change the prefix of the server.")
+    @commands.command(aliases=['setpre'], description="Change the prefix of the server.")
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     async def setprefix(self, ctx, new_prefix):
