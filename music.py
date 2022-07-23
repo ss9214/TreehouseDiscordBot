@@ -14,7 +14,7 @@ class Music(commands.Cog):
         await self.bot.wait_until_ready()
         # await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.oops.wtf', port=443, password='www.freelavalink.ga',
         #                                     https=True)
-        await wavelink.NodePool.create_node(bot=self.bot, host='lava-ny-01.thermalhosting.com', port=4018, password='thermalhosting.com', https=False)
+        await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.kapes.eu', port=2222, password='lavalinkplay', https=False)
 
     # log in
     @commands.Cog.listener()
@@ -27,7 +27,7 @@ class Music(commands.Cog):
         print(f"Node {node.identifier} is ready!")
 
     # play a song command
-    @commands.command(help="Play a song in a voice channel through YouTube.")
+    @commands.command(description="Play a song in a voice channel through YouTube.")
     @commands.guild_only()
     async def play(self, ctx, *, search: wavelink.YouTubeTrack):
         if search is None:
@@ -95,7 +95,7 @@ class Music(commands.Cog):
         await ctx.send(f'**Now Playing**: {next_song.title} **{duration}**')
 
     # leave channel command
-    @commands.command(help="Makes the bot leave the voice channel.")
+    @commands.command(description="Makes the bot leave the voice channel.")
     @commands.guild_only()
     async def leave(self, ctx):
         node = wavelink.NodePool.get_node()
@@ -113,7 +113,7 @@ class Music(commands.Cog):
             await ctx.send("The bot has been disconnected.")
 
     # pause song command
-    @commands.command(help="Pause a song that is currently playing.")
+    @commands.command(description="Pause a song that is currently playing.")
     @commands.guild_only()
     async def pause(self, ctx):
         if not ctx.voice_client:
@@ -131,7 +131,7 @@ class Music(commands.Cog):
             await ctx.send("There is no audio playing.")
 
     # resume song command
-    @commands.command(aliases=["res"], help="Resume a song that is currently paused.")
+    @commands.command(aliases=["res"], description="Resume a song that is currently paused.")
     @commands.guild_only()
     async def resume(self, ctx):
         if not ctx.voice_client:
@@ -149,7 +149,7 @@ class Music(commands.Cog):
             await ctx.send("The audio is not currently paused.")
 
     # toggle loop on or off
-    @commands.command(help="Toggle loop on/off for the current song.")
+    @commands.command(description="Toggle loop on/off for the current song.")
     @commands.guild_only()
     async def loop(self, ctx):
         if not ctx.voice_client:
@@ -169,7 +169,7 @@ class Music(commands.Cog):
             return await ctx.send("Loop is toggled off.")
 
     # look at queue command
-    @commands.command(help="View the current queue.")
+    @commands.command(description="View the current queue.")
     @commands.guild_only()
     async def queue(self, ctx):
         if not ctx.voice_client:
@@ -195,7 +195,7 @@ class Music(commands.Cog):
                 await ctx.send(f'**{i + 1}.)** {vc.queue[i]} **{duration}**')
 
     # skip command
-    @commands.command(help="Play the next song in queue")
+    @commands.command(description="Play the next song in queue")
     @commands.guild_only()
     async def skip(self, ctx):
         if not ctx.voice_client:
@@ -213,7 +213,7 @@ class Music(commands.Cog):
                 setattr(vc, "loop", False)
             await vc.stop()
 
-    @commands.command(aliases=["nowp"], help="Check what song is currently playing")
+    @commands.command(aliases=["nowp"], description="Check what song is currently playing")
     @commands.guild_only()
     async def nowplaying(self, ctx):
         if not ctx.voice_client:
@@ -234,7 +234,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("The bot is currently not playing any audio.")
 
-    @commands.command(aliases=["nextp"], help="Check what song is playing next")
+    @commands.command(aliases=["nextp"], description="Check what song is playing next")
     @commands.guild_only()
     async def nextplaying(self, ctx):
         if not ctx.voice_client:
