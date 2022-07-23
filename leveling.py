@@ -13,7 +13,23 @@ class Levels(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["r", "level", "l", "Rank", "R", "L", "Level"])
+    @commands.command(aliases=["lvllb", "lvl_lb", "lvl_leaderboard", "level_lb", "lb"], description="Check out the leaderboard for your server!")
+    @commands.guild_only()
+    async def leaderboard(self, ctx):
+        data = await self.bot.db.fetch('SELECT level,xp,user_id FROM leveling WHERE guild_id = $1 ORDER BY level DESC, xp DESC LIMIT 10', ctx.guild.id)
+        if data:
+            em = discord.Embed(title="__**Leveling Leaderboard**__", color=discord.Color.purple())
+            count = 0
+            for table in data:
+                count += 1
+                user = self.bot.get_user(table['user_id'])
+                if not user:
+                    user = "Not in server"
+                em.add_field(name=f"{count}. {user}", value=f"Level - **{table['level']}** | XP - **{table['xp']}**", inline=False)
+            return await ctx.send(embed=em)
+        return await ctx.send("There are no users to store in the leaderboard.")
+
+    @commands.command(aliases=["r", "Rank", "R"], description="Check your rank or someone else's rank.")
     @commands.guild_only()
     async def rank(self, ctx, member: discord.Member = None):
         colors = {"red": ("#580f0f", "#c01f1f"), "orange": ("#63340f", "#c96719"), "yellow": ("#494511", "#f1c40f"), "green": ("#114712", "#15a018"),
@@ -43,7 +59,7 @@ class Levels(commands.Cog):
             color = level_cache[(user, ctx.guild.id)][2]
 
         next_level_xp = (level * 10) ** 2
-        percent_next = (xp / next_level_xp) * 100
+        percent_next = round((xp / next_level_xp) * 100, 2)
         card_colors = ""
         for key in colors.keys():
             if key == color:
@@ -102,7 +118,7 @@ class Levels(commands.Cog):
                 level = level_cache[(message.author.id, message.guild.id)][0]
                 color = level_cache[(message.author.id, message.guild.id)][2]
             # actually increasing the level now that we have current xp and current level
-            if randint(1, 3) in ints:
+            if randint(1, 2) in ints:
                 xp += 1
                 if xp == (level * 10) ** 2:
                     level += 1
@@ -110,7 +126,7 @@ class Levels(commands.Cog):
                                       message.author.id, message.guild.id)
             level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
 
-    @commands.command(aliases=["ccc"])
+    @commands.command(aliases=["ccc"], description="Change the color of your !rank card.")
     @commands.guild_only()
     async def change_card_color(self, ctx, color):
         try:  # check if cached
