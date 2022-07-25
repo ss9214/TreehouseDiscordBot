@@ -1,5 +1,6 @@
 # bot.py
 # imports
+# run bot with python Desktop\\Python\\DiscordBot\\bot.py in command prompt
 import os
 import discord
 from dotenv import load_dotenv
@@ -33,7 +34,8 @@ class MyCogs(commands.Bot):
                               'cogs.fun',
                               'cogs.colors',
                               'cogs.leveling',
-                              'cogs.antispam']
+                              'cogs.antispam',
+                              'cogs.giustaff']
         for extension in initial_extensions:
             await self.load_extension(extension)
 
@@ -55,7 +57,7 @@ async def get_prefix(bot, message):
     return commands.when_mentioned_or(prefix)(bot, message)
 
 
-bot = MyCogs(get_prefix, intents=intents, activity=activity, status=discord.Status.idle)
+bot = MyCogs(get_prefix, intents=intents, activity=activity, status=discord.Status.online)
 
 
 ############################## HELP ###########################################################
@@ -104,7 +106,7 @@ class MyHelpCommand(commands.HelpCommand):
                     emoji = ':art:'
                 elif cog_name == "Moderation":
                     emoji = '<:ban:998413036425596978>'
-                if cog_name != "No Category":
+                if cog_name != "No Category" and cog_name != "Giustaff":
                     em.add_field(name=f'__{cog_name}__  {emoji}', value=f"\n".join(command_signatures), inline=False)
         await channel.send(embed=em)
 
