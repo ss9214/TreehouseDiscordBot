@@ -1,6 +1,6 @@
 # Treehouse is a multipurpose all-in-one discord bot with many features. 
 # This bot is currently being developed, so it does not have all the features that are inteded to be added.
-# The default prefix for this bot is "!", but you can change the bot's prefix as needed with the !setpre or !setprefix command.
+# The default prefix for this bot is "T", but you can change the bot's prefix as needed with the !setprefix command.
 # You can also ping the bot directly in substitute of the prefix if you do not remember what the prefix is
 # i.e @Treehouse#7704 prefix
 
