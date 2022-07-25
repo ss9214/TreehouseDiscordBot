@@ -126,6 +126,15 @@ class Levels(commands.Cog):
                                       message.author.id, message.guild.id)
             level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
 
+    @commands.command(description="Check available card colors")
+    @commands.guild_only()
+    async def card_colors(self, ctx):
+        colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "black_white"]
+        msg = ""
+        for i in range(len(colors)):
+            msg += f"**{i+1}. **{colors[i]}\n"
+        await ctx.send(msg)
+
     @commands.command(aliases=["ccc"], description="Change the color of your !rank card.")
     @commands.guild_only()
     async def change_card_color(self, ctx, color):
