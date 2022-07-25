@@ -12,7 +12,7 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def node_connect(self):
         await self.bot.wait_until_ready()
-        await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.kapes.eu', port=2222, password='lavalinkplay', https=False)
+        await wavelink.NodePool.create_node(bot=self.bot, host='lavalink.rukchadisa.live', port=8080, password='youshallnotpass', https=False)
 
     # log in
     @commands.Cog.listener()
@@ -23,6 +23,17 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         print(f"Node {node.identifier} is ready!")
+
+    # join a channel command
+    @commands.command(description="Have the bot join your voice channel.")
+    @commands.guild_only()
+    async def join(self, ctx):
+        if ctx.author.voice is None:
+            return await ctx.send("Please join a voice channel to run this command.")
+        else:
+            voice_channel = ctx.author.voice.channel
+        if not ctx.voice_client:
+            await voice_channel.connect(cls=wavelink.Player)
 
     # play a song command
     @commands.command(description="Play a song in a voice channel through YouTube.")
@@ -191,6 +202,30 @@ class Music(commands.Cog):
                 else:
                     duration += str(int(vc.queue[i].duration % 60))
                 await ctx.send(f'**{i + 1}.)** {vc.queue[i]} **{duration}**')
+
+    # deletes song from queue
+    @commands.command(description="Deletes the song from queue")
+    @commands.guild_only()
+    async def delqueue(self, ctx, number):
+        try:
+            song = int(number)
+        except ValueError:
+            return await ctx.send("Please list the number of the song you want to delete. (Tqueue command)")
+        if not ctx.voice_client:
+            return await ctx.send("The bot is not in a voice channel.")
+        elif not ctx.author.voice:
+            return await ctx.send("Please join a voice channel to run this command.")
+        elif not ctx.author.voice.channel == ctx.me.voice.channel:
+            return await ctx.send("We must be in the same voice channel for me to leave.")
+        else:
+            vc: wavelink.Player = ctx.voice_client
+        if vc.queue.is_empty:
+            return await ctx.send("The queue is empty.")
+        else:
+            for i in range(len(vc.queue)):
+                if (i+1) == song:
+                    del vc.queue[i]
+                    return await ctx.send(f"{vc.queue[i]} has been removed from the queue.")
 
     # skip command
     @commands.command(description="Play the next song in queue")
