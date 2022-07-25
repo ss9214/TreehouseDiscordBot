@@ -6,14 +6,15 @@
 
 
 
-# The bot includes a music bot feature, with users being able to play, pause, skip, add to queue, loop a song, view the queue, and more.
-# Users can also make the bot leave early with the Tleave command.
+# The bot includes a music bot feature, with users being able to play music, pause music, skip music, add music to queue, loop a song, view the queue, and more.
 
-# The bot includes a fun feature as well which includes gambling and a virtual currency. It also has a color system for guilds to create color roles that users can set.
+# It also includes a fun feature, as well as an economy system!.
 
-# This bot currently has a welcome feature, anti-spam feature, level system feature, moderation feature, and afk feature as well. 
+# This bot currently has a welcome/leaving system, level system, color role system, and afk feature as well. 
 
-# If you want to have some fun, this bot also has a tictactoe and connect4 feature!
+# For any and all safety precautions, this bot provides a verification system, an anti-spam feature, moderation, and automod.
+
+# If you want to have some fun, this bot also has tictactoe and connect4, with more games soon to be added!
 
 
 ############ IMPORTANT #####################
