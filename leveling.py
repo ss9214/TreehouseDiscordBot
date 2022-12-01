@@ -1,19 +1,14 @@
-import os
 import discord
 from discord.ext import commands
-import random
 from random import randint
-import easy_pil
 from easy_pil import *
-
-level_cache = {(0000000000, 000000000): [1, 0, "blue"]}
 
 
 class Levels(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["lvllb", "lvl_lb", "lvl_leaderboard", "level_lb", "lb"], description="Check out the leaderboard for your server!")
+    @commands.hybrid_command(aliases=["lvllb", "lvl_lb", "lvl_leaderboard", "level_lb", "lb"], description="Check out the leaderboard for your server!", with_app_command=True)
     @commands.guild_only()
     async def leaderboard(self, ctx):
         data = await self.bot.db.fetch('SELECT level,xp,user_id FROM leveling WHERE guild_id = $1 ORDER BY level DESC, xp DESC LIMIT 10', ctx.guild.id)
@@ -26,10 +21,10 @@ class Levels(commands.Cog):
                 if not user:
                     user = "Not in server"
                 em.add_field(name=f"{count}. {user}", value=f"Level - **{table['level']}** | XP - **{table['xp']}**", inline=False)
-            return await ctx.send(embed=em)
-        return await ctx.send("There are no users to store in the leaderboard.")
+            return await ctx.reply(embed=em)
+        return await ctx.p("There are no users to store in the leaderboard.")
 
-    @commands.command(aliases=["r", "Rank", "R"], description="Check your rank or someone else's rank.")
+    @commands.hybrid_command(aliases=["r", "Rank", "R"], description="Check your rank or someone else's rank.", with_app_command=True)
     @commands.guild_only()
     async def rank(self, ctx, member: discord.Member = None):
         colors = {"red": ("#580f0f", "#c01f1f"), "orange": ("#63340f", "#c96719"), "yellow": ("#494511", "#f1c40f"), "green": ("#114712", "#15a018"),
@@ -39,7 +34,7 @@ class Levels(commands.Cog):
         else:
             user = ctx.author.id
         try:  # check if cached
-            level_cache[(user, ctx.guild.id)]
+            ctx.bot.level_cache[(user, ctx.guild.id)]
         except KeyError:  # not cached
             data = await self.bot.db.fetchval('SELECT user_id FROM leveling WHERE (user_id, guild_id) = ($1, $2)', user, ctx.guild.id)
             if not data:  # not in database
@@ -47,16 +42,16 @@ class Levels(commands.Cog):
                 xp = 0
                 level = 1
                 color = "blue"
-                level_cache[(user, ctx.guild.id)] = [1, 0, "blue"]
+                ctx.bot.level_cache[(user, ctx.guild.id)] = [1, 0, "blue"]
             else:  # in database
                 xp = await self.bot.db.fetchval('SELECT xp FROM leveling WHERE (user_id, guild_id) = ($1, $2)', user, ctx.guild.id)
                 level = await self.bot.db.fetchval('SELECT level FROM leveling WHERE (user_id, guild_id) = ($1, $2)', user, ctx.guild.id)
                 color = await self.bot.db.fetchval('SELECT card_color FROM leveling WHERE (user_id, guild_id) = ($1, $2)', user, ctx.guild.id)
-                level_cache[(user, ctx.guild.id)] = [level, xp, color]
+                ctx.bot.level_cache[(user, ctx.guild.id)] = [level, xp, color]
         else:  # if cached
-            level = level_cache[(user, ctx.guild.id)][0]
-            xp = level_cache[(user, ctx.guild.id)][1]
-            color = level_cache[(user, ctx.guild.id)][2]
+            level = ctx.bot.level_cache[(user, ctx.guild.id)][0]
+            xp = ctx.bot.level_cache[(user, ctx.guild.id)][1]
+            color = ctx.bot.level_cache[(user, ctx.guild.id)][2]
 
         next_level_xp = (level * 10) ** 2
         percent_next = round((xp / next_level_xp) * 100, 2)
@@ -87,7 +82,7 @@ class Levels(commands.Cog):
         background.text((200, 130), f"Level - {level} | XP - {xp}/{next_level_xp} | {percent_next}%", font=small_poppins, color="#FFFFFF")
 
         file = discord.File(fp=background.image_bytes, filename="card.png")
-        await ctx.send(file=file)
+        await ctx.reply(file=file)
 
     @commands.Cog.listener("on_message")
     async def increaseXP(self, message):
@@ -96,7 +91,7 @@ class Levels(commands.Cog):
         else:
             ints = [1]
             try:  # check if cached
-                level_cache[(message.author.id, message.guild.id)]
+                self.bot.level_cache[(message.author.id, message.guild.id)]
             except KeyError:  # not cached
                 data = await self.bot.db.fetchval('SELECT user_id FROM leveling WHERE (user_id, guild_id) = ($1, $2)', message.author.id, message.guild.id)
                 if not data:  # not in database
@@ -104,7 +99,7 @@ class Levels(commands.Cog):
                                               message.author.id, "blue", message.guild.id)
                     xp = 0
                     level = 1
-                    level_cache[(message.author.id, message.guild.id)] = [1, 0, "blue"]
+                    self.bot.level_cache[(message.author.id, message.guild.id)] = [1, 0, "blue"]
                     color = "blue"
                 else:
                     xp = await self.bot.db.fetchval('SELECT xp FROM leveling WHERE (user_id, guild_id) = ($1, $2)', message.author.id, message.guild.id)
@@ -112,11 +107,11 @@ class Levels(commands.Cog):
                                                        message.author.id, message.guild.id)
                     color = await self.bot.db.fetchval('SELECT card_color FROM leveling WHERE (user_id, guild_id) = ($1, $2)',
                                                        message.author.id, message.guild.id)
-                    level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
+                    self.bot.level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
             else:  # if cached
-                xp = level_cache[(message.author.id, message.guild.id)][1]
-                level = level_cache[(message.author.id, message.guild.id)][0]
-                color = level_cache[(message.author.id, message.guild.id)][2]
+                xp = self.bot.level_cache[(message.author.id, message.guild.id)][1]
+                level = self.bot.level_cache[(message.author.id, message.guild.id)][0]
+                color = self.bot.level_cache[(message.author.id, message.guild.id)][2]
             # actually increasing the level now that we have current xp and current level
             if randint(1, 2) in ints:
                 xp += 1
@@ -124,37 +119,37 @@ class Levels(commands.Cog):
                     level += 1
             await self.bot.db.execute('UPDATE leveling SET (xp, level) = ($1, $2) WHERE (user_id, guild_id) = ($3, $4)', xp, level,
                                       message.author.id, message.guild.id)
-            level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
+            self.bot.level_cache[(message.author.id, message.guild.id)] = [level, xp, color]
 
-    @commands.command(description="Check available card colors")
+    @commands.hybrid_command(description="Check available card colors",with_app_command=True)
     @commands.guild_only()
     async def card_colors(self, ctx):
         colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "black_white"]
         msg = ""
         for i in range(len(colors)):
             msg += f"**{i+1}. **{colors[i]}\n"
-        await ctx.send(msg)
+        await ctx.reply(msg)
 
-    @commands.command(aliases=["ccc"], description="Change the color of your !rank card.")
+    @commands.hybrid_command(aliases=["ccc"], description="Change the color of your !rank card.",with_app_command=True)
     @commands.guild_only()
     async def change_card_color(self, ctx, color):
         try:  # check if cached
-            level_cache[(ctx.author.id, ctx.guild.id)]
+            ctx.bot.level_cache[(ctx.author.id, ctx.guild.id)]
         except KeyError:  # not cached
             data = await self.bot.db.fetchval('SELECT user_id FROM leveling WHERE (user_id, guild_id) = ($1, $2)', ctx.author.id, ctx.guild.id)
             if not data:  # not in database
                 await self.bot.db.execute(
                     'INSERT INTO leveling (user_id, level, xp, card_color, guild_id) VALUES ($1, 1, 0, $2, $3)',
                     ctx.author.id, "blue", ctx.guild.id)
-                level_cache[(message.author.id, ctx.guild.id)] = [1, 0, "blue"]
+                ctx.bot.level_cache[(ctx.author.id, ctx.guild.id)] = [1, 0, "blue"]
         # now that it's in the database and cache we can proceed
         colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "black_white"]
         if color in colors:
             await self.bot.db.execute('UPDATE leveling SET card_color = $1 WHERE (user_id, guild_id) = ($2, $3)', color, ctx.author.id, ctx.guild.id)
-            level_cache[(ctx.author.id, ctx.guild.id)][2] = color
-            return await ctx.send(f"Your card color has been set to {color}.")
+            ctx.bot.level_cache[(ctx.author.id, ctx.guild.id)][2] = color
+            return await ctx.reply(f"Your card color has been set to {color}.")
         else:
-            return await ctx.send(f"Please choose a color in the following list: {colors}")
+            return await ctx.reply(f"Please choose a color in the following list: {colors}")
 
 
 async def setup(bot):
