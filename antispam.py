@@ -1,8 +1,5 @@
-import os
-import discord
 from discord.ext import commands
 from datetime import timedelta
-import datetime
 import asyncio
 
 
