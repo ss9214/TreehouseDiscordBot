@@ -1,7 +1,7 @@
 # Treehouse is a multipurpose all-in-one discord bot with many features. 
 # This bot is currently being developed, so it does not have all the features that are inteded to be added.
 # The default prefix for this bot is "T", but you can change the bot's prefix as needed with the !setprefix command.
-# You can also ping the bot directly in substitute of the prefix if you do not remember what the prefix is
+# You can also ping the bot directly in substitute of the prefix if you do not remember what the prefix is or use slash commands
 # i.e @Treehouse#7704 prefix
 
 
@@ -14,7 +14,7 @@
 
 # For any and all safety precautions, this bot provides a verification system, an anti-spam feature, moderation, and automod.
 
-# If you want to have some fun, this bot also has tictactoe and connect4, with more games soon to be added!
+# If you want to have some fun, this bot also has tictactoe and connect4, as well as a few gambling games, with more games soon to be added!
 
 
 ############ IMPORTANT #####################
